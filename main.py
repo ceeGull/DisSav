@@ -10,7 +10,6 @@
 # This program I took inspiration from a KDE Plasma Plasmoid that kinda does #
 # the same thing as this program except you can do it with any file.         #
 ##############################################################################
-# TODO: Clean up code to open it
 # ;Imports
 try:
     from vars.init import *
