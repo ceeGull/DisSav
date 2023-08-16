@@ -7,6 +7,7 @@
 {   : = Folder
 {   () = Call Function
 { ===============================================================
+{ To make a comment use {
 { Functions <-- Look in main.py (If this isn't compiled that is)
 {   W() = get_plasma_wallpapers()
 {   F() = get_current_firefox_profile() --> firefox profile
