@@ -1,0 +1,50 @@
+{ Keys
+{   ! = New Dictionary
+{   $ = Refer to user directory
+{   | = Tag list seperator 
+{   ? = Item
+{   ; = Request Root Priv.
+{   : = Folder
+{   () = Call Function
+{ ===============================================================
+{ Functions <-- Look in main.py (If this isn't compiled that is)
+{   W() = get_plasma_wallpapers()
+{   F() = get_current_firefox_profile() --> firefox profile
+{   L() = get_current_librewolf_profile() --> Librewolf profile
+{   S() = get_current_plasma_sounds()
+{   I() = grabs (/usr/share/icons, /usr/share/WindowMaker/Icons and user icons)
+Config-Files!
+    PlasmaDesktopAppletRC="$.config/"plasma-org.kde.plasma.desktop-appletsrc" | [Plasma, Config, User, Applet]?
+    PlasmaRC="$.config/plasmarc" | [Plasma, Config, User]?
+    PlasmaShellRC="$.config/plasmashellrc" | [Plasma, Config, User, Shell]?
+    KDEGlobals="$.config/kdeglobals" | [Plasma, Config, User, KDE, Globals]?
+    KwinRC="$.config/kwinrc" | [Kwin, Config, User]?
+    KwinRulesRC="$.config/kwinrulesrc" | [Kwin, Config, User, Rules]?
+    LatteDockRC="$.config/lattedockrc" | [Latte, Dock, Config, User]?
+    DolphinRC="$.config/dolphinrc" | [Plasma, Dolphin, Config, User]?
+    KSMServerRC="$.config/ksmserverrc" | [Plasma, Config, User]?
+    KCMInputRC="$.config/kcminputrc" | [Plasma, Config, User, Input]?
+    KGlobalShortcutsRC="$.config/kglobalshortcutsrc" | [Plasma, Config, User, KDE, Global, Shortcuts]?
+    KlipperRC="$.config/klipperrc" | [Plasma, Klipper, Config, User]?
+    KonsoleRC="$.config/konsolerc" | [Plasma, Konsole, Config, User]?
+    KScreenLockerRC="$.config/kscreenlockerrc" | [Plasma, Config, User, Lock Screen]?
+    KRunnerRC="$.config/krunnerrc" | [Plasma, KRunner, Config, User, Search]?
+    KCMFonts="$.config/kcmfonts" | [Plasma, KCM, Config, User, Fonts]?
+    LatteRun="$.config/latterun" | [Latte, Dock, Config, User]?
+    GTKRC="$.config/gtkrc" | [GTK, Config, User, Generalized]?
+    GTKRC2.0="$.config/gtkrc-2.0" | [GTK, 2.0, Config, User, Generalized]?
+    PlasmaWindowedRC="$.config/plasmawindowedrc" | [Plasma, Config, User]?
+Config-Folders!
+    Latte="$.config/latte" | [Latte, Dock, Config, User, Layouts]?:
+    Kvantum="$.config/Kvantum" | [Kvantum, Themes, Config, User]?:
+Local!
+    PlasmaWindowDecorations="$.local/share/aurorae/" | [Plasma, Window Decorations]?:
+    ColorSchemes="$.local/share/color-schemes/" | [Plasma, Color Schemes]?:
+    LatteIndicators="$.local/share/latte/" | [Latte Dock, Indicators]?:
+    Plasma="$.local/share/plasma/" | [Plasma, Themes]?:
+    KonsoleProfiles="$.local/share/konsole/" | [Konsole, Profiles]?:
+    KwinScripts="$.local/share/kwin/" | [Kwin, Scripts]?:
+Root!
+    RootPlasma="/usr/share/plasma" | [Root, Plasma]?:;
+Latte!
+    LIndicators="/usr/share/Latte" | [Latte Dock, Indicators, root]?:;
