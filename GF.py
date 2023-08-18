@@ -8,7 +8,7 @@ P     A   A N   N D   D A   A     F     R R   A   A M   M E     WW WW O   O R R 
 P     A   A N   N D   D A   A     F     R  R  A   A M   M E     WW WW O   O R  R  K  K
 P     A   A N   N DDDD  A   A     F     R   R A   A M   M EEEEE W   W  OOO  R   R K   K
 ========================================================================================
-                                                                    Version: 1.017c Angry Ailurus
+                                                                    Version: 1.017d Angry Ailurus
 
 Gull Framework without Pygame!
 This file stores very simple functions with the sole purpose of de-bloating the Main.py file (used to be)
@@ -34,7 +34,7 @@ except ImportError as ie:
 
 # ;VARIABLES-------------------------------------------------------------------------------------------------------------------
 # ;PANDA FRAMEWORK
-GF_VERSION = "1.017c"
+GF_VERSION = "1.017d"
 GF_EDITION = "Panda Framework: Main"
 GF_EDITION_SHORT = "Main"
 
@@ -75,8 +75,8 @@ def p(t=f"passed {choice(['Record Player', 'Gameboy', 'Tea'])}", **kwargs):
                 |_______lte = less than or equal to
                 |_______ne = not equal
         |_____IF Bool
-                |_______True
-                |_______False
+                |_______not = is not
+                |_______If none, then check if condition is true to changeCValue
 
     Examples
 
@@ -97,10 +97,10 @@ def p(t=f"passed {choice(['Record Player', 'Gameboy', 'Tea'])}", **kwargs):
         elif type(condition) is str:
             changeCValue = kwargs.get("value", "Hello, Gull!")
     if type(condition) is bool and type(changeCValue) is bool:
-        compare_int = kwargs.get("compare", True) # ;Equals to (if condition == value)
-        if compare_int:
+        compare_int = kwargs.get("compare", "not") # ;Equals to (if condition == value)
+        if compare_int == "not":
             if condition is not changeCValue:
-                print(t)
+                print(f"48 {t}")
         elif condition is changeCValue:
             print(t)
     elif type(condition) in [int, float] and type(changeCValue) in [int, float]:
