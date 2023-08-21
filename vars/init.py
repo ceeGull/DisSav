@@ -72,6 +72,120 @@ def pip_list_len():
     table_sep = subprocess.run(["pip", "list"], capture_output=True, universal_newlines="\n").stdout.split("\n")[1]
     return table_sep
 
+def readfreedesktopfile(path):
+    # DICT
+    sections = {}
+    # CODE
+    with open(path, "r") as _index_file:
+        data = _index_file.read()
+        contents = data.split("[")
+        for s in contents:
+            if s == "":
+                contents.pop(contents.index(s))
+        for section in contents:
+            _section = section.split("]")
+            section_name = _section[0]
+            section_properties = _section[1].split("\n")
+            sections.update({section_name: {}})
+            for property in section_properties:
+                if property.__contains__("="):
+                    _property = property.split("=")
+                    sections[section_name].update({_property[0]: _property[1]})
+    return sections
+
+def get_sounds():
+    """
+    #########################################################################
+    # Grabs all KDE Plasma notifyrc SFX targets from the user config folder #
+    #########################################################################
+    :return:
+    """
+    # PATH
+    cfg_dir = getDir(targetPaths["config"], filter=".notifyrc", alsoIncludeFileName=False, print_dict=False)
+    # LIST
+    known_sfx = []
+    # CODE
+    window_decoration = readfreedesktopfile(f"/home/{gp.getuser()}/.config/kwinrc")["org.kde.kdecoration2"]['theme']
+    window_decoration_seetings = readfreedesktopfile(f"/home/{gp.getuser()}/.config/auroraerc")[window_decoration]
+    if window_decoration == "kwin4_decoration_qml_nueplastik":
+        window_decoration_seetings_hover = window_decoration_seetings["buttonSoundsHoverSoundPath"].split("file://")[1]
+        window_decoration_seetings_pressed = window_decoration_seetings["buttonSoundsPressedSoundPath"].split("file://")[1]
+        known_sfx.append(window_decoration_seetings_hover)
+        known_sfx.append(window_decoration_seetings_pressed)
+
+    with open("/etc/sddm.conf.d/kde_settings.conf", "r") as sddm_configuration:
+        data = sddm_configuration.read().split("\n")
+        counter = 0
+        theme_index = 0
+        theme_section_end_index = 0
+        switch = False
+        for var in data:
+            if var not in ["", " "]:
+                if var == "[Theme]":
+                    theme_index = counter+1
+                    switch = True
+                if switch:
+                    if var != "[Theme]" and var[0] == "[":
+                        theme_section_end_index = counter-1
+                        switch = False
+            counter += 1
+
+        sddm_theme_configuration = data[theme_index:theme_section_end_index]
+        if sddm_theme_configuration[-1] in ["", " "]:
+            sddm_theme_configuration.pop(-1)
+        for i in sddm_theme_configuration:
+            var = i.split("=")[0].lower()
+            value = i.split("=")[1]
+            vars().update({var: value})
+
+        with open(f"/usr/share/sddm/themes/{vars()['current']}/Main.qml", "r") as sddm_theme:
+            main_qml = sddm_theme.read().split("\n")
+            for line in main_qml:
+                if line.__contains__("SoundEffect"):
+                    qml_sfx = line.split("{")[1].split("}")[0].split(";")
+                    if qml_sfx[0].split(":")[1][0] == " ":
+                        identifier = qml_sfx[0].split(":")[1][1:]
+                    else:
+                        identifier = qml_sfx[0].split(":")[1]
+                    if qml_sfx[1].split(":")[1][0] == " ":
+                        source = qml_sfx[1].split(":")[1][1:]
+                    else:
+                        source = qml_sfx[1].split(":")[1]
+                    if not source.__contains__(identifier) and source.__contains__('"'):
+                        source = source.split('"')[1]
+                        known_sfx.append(f"/usr/share/sddm/themes/{vars()['current']}/{source}")
+
+    with open(f"/home/{gp.getuser()}/.bash_profile", "r") as bash_profile:
+        contents = bash_profile.read().split("\n")
+        for command in contents:
+            if command.__contains__("    mpv"):
+                arguments = command.split('"')
+                arguments.pop(-1)
+                window_maker_startup_sound = arguments[-1]
+        if "window_maker_startup_sound" in vars():
+            known_sfx.append(window_maker_startup_sound)
+
+    for directory in [cfg_dir[file] for file in cfg_dir]:
+        with open(directory, "r") as plasma_sounds_file:
+            data = plasma_sounds_file.read()
+            contents = data.split("[")
+            for props in contents:
+                props_content = props.split("]")
+                p(f"[props_content] {props_content}", cond=ro_verbose_mode)
+                if len(props_content) >= 2:
+                    event_name = props_content[0]
+                    properties = props_content[1].split("\n")
+                    for char in properties:
+                        if char == "":
+                            properties.pop(properties.index(char))
+                        else:
+                            property_name_and_values = char.split("=")
+                            if property_name_and_values[1] == "":
+                                del property_name_and_values
+                            elif property_name_and_values[0] == "Sound" and not property_name_and_values[1] in known_sfx:
+                                known_sfx.append(property_name_and_values[1])
+    return known_sfx
+
 # ; Desktop Environments
 # ;     KDE-Plasma 5
 
@@ -115,38 +229,6 @@ def get_plasma_wallpapers():
         profile_dict["Wallpapers"] = None
         plasma_settings_wallpapers = plasma_settings_wallpapers[0].split(",")
         return plasma_settings_wallpapers
-
-def get_current_plasma_sounds():
-    """
-    #########################################################################
-    # Grabs all KDE Plasma notifyrc SFX targets from the user config folder #
-    #########################################################################
-    :return:
-    """
-    # PATH
-    cfg_dir = getDir(targetPaths["config"], filter=".notifyrc", alsoIncludeFileName=False, print_dict=False)
-    # LIST
-    known_sfx = []
-    # CODE
-    for directory in [cfg_dir[file] for file in cfg_dir]:
-        with open(directory, "r") as plasma_sounds_file:
-            data = plasma_sounds_file.read()
-            contents = data.split("[")
-            for props in contents:
-                props_content = props.split("]")
-                p(f"[props_content] {props_content}", cond=ro_verbose_mode)
-                if len(props_content) >= 2:
-                    event_name = props_content[0]
-                    properties = props_content[1].split("\n")
-                    for char in properties:
-                        if char == "":
-                            properties.pop(properties.index(char))
-                        else:
-                            property_name_and_values = char.split("=")
-                            if property_name_and_values[1] == "":
-                                del property_name_and_values
-                            elif property_name_and_values[0] == "Sound" and not property_name_and_values[1] in known_sfx:
-                                known_sfx.append(property_name_and_values[1])
 
 
 def grab_application_title_text(**gatto):
@@ -295,91 +377,6 @@ def grab_application_title_text(**gatto):
 
         except FileNotFoundError as err:
             p(f"'{err}' not found")
-
-
-def get_current_plasma_sounds():
-    """
-##########################
-# Grabs all used sounds  #
-##########################
-    :return known_sfx:
-    """
-    # PATH
-    cfg_dir = getDir(targetPaths["config"], filter=".notifyrc", alsoIncludeFileName=False, print_dict=False)
-    # LIST
-    known_sfx = []
-    # CODE
-    with open("/etc/sddm.conf.d/kde_settings.conf", "r") as sddm_configuration:
-        data = sddm_configuration.read().split("\n")
-        counter = 0
-        theme_index = 0
-        theme_section_end_index = 0
-        switch = False
-        for var in data:
-            if var not in ["", " "]:
-                if var == "[Theme]":
-                    theme_index = counter+1
-                    switch = True
-                if switch:
-                    if var != "[Theme]" and var[0] == "[":
-                        theme_section_end_index = counter-1
-                        switch = False
-            counter += 1
-
-        sddm_theme_configuration = data[theme_index:theme_section_end_index]
-        if sddm_theme_configuration[-1] in ["", " "]:
-            sddm_theme_configuration.pop(-1)
-        for i in sddm_theme_configuration:
-            var = i.split("=")[0].lower()
-            value = i.split("=")[1]
-            vars().update({var: value})
-
-        with open(f"/usr/share/sddm/themes/{vars()['current']}/Main.qml", "r") as sddm_theme:
-            main_qml = sddm_theme.read().split("\n")
-            for line in main_qml:
-                if line.__contains__("SoundEffect"):
-                    qml_sfx = line.split("{")[1].split("}")[0].split(";")
-                    if qml_sfx[0].split(":")[1][0] == " ":
-                        identifier = qml_sfx[0].split(":")[1][1:]
-                    else:
-                        identifier = qml_sfx[0].split(":")[1]
-                    if qml_sfx[1].split(":")[1][0] == " ":
-                        source = qml_sfx[1].split(":")[1][1:]
-                    else:
-                        source = qml_sfx[1].split(":")[1]
-                    if not source.__contains__(identifier) and source.__contains__('"'):
-                        source = source.split('"')[1]
-                        known_sfx.append(f"/usr/share/sddm/themes/{vars()['current']}/{source}")
-
-    with open(f"/home/{gp.getuser()}/.bash_profile", "r") as bash_profile:
-        contents = bash_profile.read().split("\n")
-        for command in contents:
-            if command.__contains__("    mpv"):
-                arguments = command.split('"')
-                arguments.pop(-1)
-                window_maker_startup_sound = arguments[-1]
-        if "window_maker_startup_sound" in vars():
-            known_sfx.append(window_maker_startup_sound)
-    for directory in [cfg_dir[file] for file in cfg_dir]:
-        with open(directory, "r") as plasma_sounds_file:
-            data = plasma_sounds_file.read()
-            contents = data.split("[")
-            for props in contents:
-                props_content = props.split("]")
-                p(f"[props_content] {props_content}", cond=ro_verbose_mode)
-                if len(props_content) >= 2:
-                    event_name = props_content[0]
-                    properties = props_content[1].split("\n")
-                    for char in properties:
-                        if char == "":
-                            properties.pop(properties.index(char))
-                        else:
-                            property_name_and_values = char.split("=")
-                            if property_name_and_values[1] == "":
-                                del property_name_and_values
-                            elif property_name_and_values[0] == "Sound" and not property_name_and_values[1] in known_sfx:
-                                known_sfx.append(property_name_and_values[1])
-    return known_sfx
 
 # ; Web Browsers
 # ;     Gecko Engine
