@@ -3,7 +3,7 @@
 #----------------------------------------------------------------------------#
 # By            | cGull                                                      #
 # Date Created  | February 24, 2023 7:37 PM (2/24/2023)                      #
-# Version       | 6a                                                         #
+# Version       | 6.1                                                        #
 # Source Code   | Open                                                       #
 # Note          | Forked from SavePlasmaConfig                               #
 ##############################################################################
@@ -19,10 +19,10 @@ except ImportError as IE:
     print(f"IMPORT ERROR: {IE}")
 # ;Vars
 operating_system_info = sysDetect(getMoreInfo=True, quiet=True)
-version_main = "DisSav 6"
+version_main = "DisSav 6.1"
 # ;Code
 
-def run(file=f"{GF_FILE_PATH}/Plasma.txt", **ro):
+def run(file=f"{GF_FILE_PATH}/cOS.txt", **ro):
     """
 #############################################################################
 #                               Main Function                               #
@@ -434,7 +434,7 @@ def run(file=f"{GF_FILE_PATH}/Plasma.txt", **ro):
                                     subprocess.run(["cp", "-RT", path, destination])
 
                         if destination.__contains__("S()"): # ;Get System Sounds (currently used ones)
-                            plasma_sounds_list_targets = get_current_plasma_sounds()
+                            plasma_sounds_list_targets = get_sounds()
                             plasma_sounds_list_destinations = plasma_sounds_list_targets.copy()
                             plasma_sounds_list_destination_target = destination.replace("S()", "")+"Sounds/"
                             getPresSpec(plasma_sounds_list_destination_target, create_folder=True)
@@ -454,7 +454,6 @@ def run(file=f"{GF_FILE_PATH}/Plasma.txt", **ro):
                                     subprocess.run(["cp", p_sfx_target, p_sfx_destination])
 
                         if destination.__contains__("I()"):
-                            # ;f"{homepath}.local/share/icons", "/usr/share/icons", "/usr/share/WindowMaker/"
                             local_icons = os.walk(f"{homepath}.local/share/icons").__next__()
                             local_icons_path = local_icons[0]
                             local_icons_folders = local_icons[1]
@@ -723,4 +722,3 @@ def run(file=f"{GF_FILE_PATH}/Plasma.txt", **ro):
         with open(f"{homepath}/Bakup/{name}/Save_info.txt", "w+") as save_output:
             save_output.write(output)
         p(f"\nFinished {name} at {datetime.now().strftime('%Y-%m-%d %I:%M %p')} in {homepath}Bakup/{name}/\n")
-
