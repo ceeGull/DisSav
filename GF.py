@@ -8,7 +8,7 @@ P     A   A N   N D   D A   A     F     R R   A   A M   M E     WW WW O   O R R 
 P     A   A N   N D   D A   A     F     R  R  A   A M   M E     WW WW O   O R  R  K  K
 P     A   A N   N DDDD  A   A     F     R   R A   A M   M EEEEE W   W  OOO  R   R K   K
 ========================================================================================
-                                                                    Version: 1.017d Angry Ailurus
+                                                                    Version: 1.017e Angry Ailurus
 
 Gull Framework without Pygame!
 This file stores very simple functions with the sole purpose of de-bloating the Main.py file (used to be)
@@ -34,7 +34,7 @@ except ImportError as ie:
 
 # ;VARIABLES-------------------------------------------------------------------------------------------------------------------
 # ;PANDA FRAMEWORK
-GF_VERSION = "1.017d"
+GF_VERSION = "1.017e"
 GF_EDITION = "Panda Framework: Main"
 GF_EDITION_SHORT = "Main"
 
@@ -75,8 +75,8 @@ def p(t=f"passed {choice(['Record Player', 'Gameboy', 'Tea'])}", **kwargs):
                 |_______lte = less than or equal to
                 |_______ne = not equal
         |_____IF Bool
-                |_______not = is not
-                |_______If none, then check if condition is true to changeCValue
+                |_______e = is not
+                |_______not, then check if condition is true to changeCValue
 
     Examples
 
@@ -97,7 +97,7 @@ def p(t=f"passed {choice(['Record Player', 'Gameboy', 'Tea'])}", **kwargs):
         elif type(condition) is str:
             changeCValue = kwargs.get("value", "Hello, Gull!")
     if type(condition) is bool and type(changeCValue) is bool:
-        compare_int = kwargs.get("compare", "not") # ;Equals to (if condition == value)
+        compare_int = kwargs.get("compare", "e") # ;Equals to (if condition == value)
         if compare_int == "not":
             if condition is not changeCValue:
                 print(f"48 {t}")
@@ -1079,7 +1079,7 @@ class GF_INIT:
         self.init_all_classes = kwargs.get("init_all", False)  # ;Runs all initilized classes
         self.no_start_print = kwargs.get("no_print", False) # ;Shhhhhhhh quiet \/
         #   CODE
-        p(f"\nPanda Framework v: {GF_VERSION}\n\tBy S3AGU11\n\t\tCode: https://github.com/SeagullisLearningToCode/Gull-Framework\n\t\tNOTE: No repo is avalible as of this version of PF, it will soon be added\n\n------------------------------------------------------------------------------------------------------------", cond=self.no_start_print, value=False)
+        p(f"\nPanda Framework v: {GF_VERSION}\n\tBy S3AGU11\n\t\tCode: https://github.com/ceeGull/Gull-Framework\n\t\tNOTE: No repo is avalible as of this version of PF, it will soon be added\n\n------------------------------------------------------------------------------------------------------------", cond=self.no_start_print, value=False)
         if self.init_all_classes:
             if self.enable_assembly_mode:
                 self.dl = GF_DEVLOG()
